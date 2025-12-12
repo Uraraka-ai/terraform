@@ -41,70 +41,44 @@ module "app_service_plan_ASP2" {
 
 module "app_service_APP1" {
   source              = "./modules/app_service"
-  name                = "cmaz-fga8r1mg-mod5-app-01"
-  location            = var.resource_groups["RG1"].location
-  resource_group_name = var.resource_groups["RG1"].name
+  name                = var.app_services["APP1"].name
+  location            = var.app_services["APP1"].location
+  resource_group_name = var.app_services["APP1"].resource_group_name
   app_service_plan_id = module.app_service_plan_ASP1.id
-  tags                = var.resource_groups["RG1"].tags
-  ip_restrictions = [
-    {
-      name       = "allow-ip"
-      ip_address = "18.153.146.156/32"
-      action     = "Allow"
-      priority   = 100
-    },
-    {
-      name        = "allow-tm"
-      service_tag = "AzureTrafficManager"
-      action      = "Allow"
-      priority    = 200
-    }
-  ]
+  tags                = var.app_services["APP1"].tags
+  ip_restrictions     = var.app_services["APP1"].ip_restrictions
 }
 
 module "app_service_APP2" {
   source              = "./modules/app_service"
-  name                = "cmaz-fga8r1mg-mod5-app-02"
-  location            = var.resource_groups["RG2"].location
-  resource_group_name = var.resource_groups["RG2"].name
+  name                = var.app_services["APP2"].name
+  location            = var.app_services["APP2"].location
+  resource_group_name = var.app_services["APP2"].resource_group_name
   app_service_plan_id = module.app_service_plan_ASP2.id
-  tags                = var.resource_groups["RG2"].tags
-  ip_restrictions = [
-    {
-      name       = "allow-ip"
-      ip_address = "18.153.146.156/32"
-      action     = "Allow"
-      priority   = 100
-    },
-    {
-      name        = "allow-tm"
-      service_tag = "AzureTrafficManager"
-      action      = "Allow"
-      priority    = 200
-    }
-  ]
+  tags                = var.app_services["APP2"].tags
+  ip_restrictions     = var.app_services["APP2"].ip_restrictions
 }
 
 module "traffic_manager" {
   source              = "./modules/traffic_manager"
-  name                = "cmaz-fga8r1mg-mod5-traf"
-  resource_group_name = var.resource_groups["RG3"].name
-  routing_method      = "Performance"
-  tags                = var.resource_groups["RG3"].tags
+  name                = var.traffic_manager.name
+  resource_group_name = var.traffic_manager.resource_group_name
+  routing_method      = var.traffic_manager.routing_method
+  tags                = var.traffic_manager.tags
   endpoints = {
     APP1 = {
-      name               = "app1-endpoint"
+      name               = var.traffic_manager.endpoints["APP1"].name
       target_resource_id = module.app_service_APP1.id
-      priority           = 1
-      weight             = 100
-      location           = var.resource_groups["RG1"].location
+      priority           = var.traffic_manager.endpoints["APP1"].priority
+      weight             = var.traffic_manager.endpoints["APP1"].weight
+      location           = var.traffic_manager.endpoints["APP1"].location
     }
     APP2 = {
-      name               = "app2-endpoint"
+      name               = var.traffic_manager.endpoints["APP2"].name
       target_resource_id = module.app_service_APP2.id
-      priority           = 2
-      weight             = 100
-      location           = var.resource_groups["RG2"].location
+      priority           = var.traffic_manager.endpoints["APP2"].priority
+      weight             = var.traffic_manager.endpoints["APP2"].weight
+      location           = var.traffic_manager.endpoints["APP2"].location
     }
   }
 }
