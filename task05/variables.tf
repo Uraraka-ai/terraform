@@ -4,6 +4,7 @@ variable "resource_groups" {
     location = string
     tags     = map(string)
   }))
+  description = "A map of resource group definitions, each containing the name, location, and tags for the resource group."
 }
 
 variable "app_service_plans" {
@@ -15,5 +16,5 @@ variable "app_service_plans" {
     worker_count        = number
     tags                = map(string)
   }))
+  description = "A map of App Service Plan definitions, each containing the name, location, associated resource group name, SKU, worker count, and tags for the App Service Plan."
 }
-
