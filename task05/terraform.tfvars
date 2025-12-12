@@ -42,7 +42,7 @@ app_services = {
     resource_group_name = "cmaz-fga8r1mg-mod5-rg-01"
     app_service_plan_id = "" # To be set in main.tf using module output
     tags                = { Creator = "volodymyr_havadza@epam.com" }
-    ip_restrictions     = [
+    ip_restrictions = [
       {
         name       = "allow-ip"
         ip_address = "18.153.146.156/32"
@@ -63,7 +63,7 @@ app_services = {
     resource_group_name = "cmaz-fga8r1mg-mod5-rg-02"
     app_service_plan_id = "" # To be set in main.tf using module output
     tags                = { Creator = "volodymyr_havadza@epam.com" }
-    ip_restrictions     = [
+    ip_restrictions = [
       {
         name       = "allow-ip"
         ip_address = "18.153.146.156/32"
