@@ -19,17 +19,6 @@ module "resource_group_RG3" {
   tags     = var.resource_groups["RG3"].tags
 }
 
-resource "null_resource" "wait_for_rg" {
-  depends_on = [
-    module.resource_group_RG1,
-    module.resource_group_RG2,
-    module.resource_group_RG3
-  ]
-
-  provisioner "local-exec" {
-    command = "powershell -Command Start-Sleep -Seconds 30"
-  }
-}
 
 module "app_service_plan_ASP1" {
   source              = "./modules/app_service_plan"
@@ -39,7 +28,7 @@ module "app_service_plan_ASP1" {
   sku                 = var.app_service_plans["ASP1"].sku
   worker_count        = var.app_service_plans["ASP1"].worker_count
   tags                = var.app_service_plans["ASP1"].tags
-  depends_on          = [null_resource.wait_for_rg]
+  depends_on          = [module.resource_group_RG1]
 }
 
 module "app_service_plan_ASP2" {
@@ -50,7 +39,7 @@ module "app_service_plan_ASP2" {
   sku                 = var.app_service_plans["ASP2"].sku
   worker_count        = var.app_service_plans["ASP2"].worker_count
   tags                = var.app_service_plans["ASP2"].tags
-  depends_on          = [null_resource.wait_for_rg]
+  depends_on          = [module.resource_group_RG2]
 }
 
 module "app_service_APP1" {
@@ -61,7 +50,7 @@ module "app_service_APP1" {
   app_service_plan_id = module.app_service_plan_ASP1.id
   tags                = var.app_services["APP1"].tags
   ip_restrictions     = var.app_services["APP1"].ip_restrictions
-  depends_on          = [null_resource.wait_for_rg]
+  depends_on          = [module.app_service_plan_ASP1]
 }
 
 module "app_service_APP2" {
@@ -72,7 +61,7 @@ module "app_service_APP2" {
   app_service_plan_id = module.app_service_plan_ASP2.id
   tags                = var.app_services["APP2"].tags
   ip_restrictions     = var.app_services["APP2"].ip_restrictions
-  depends_on          = [null_resource.wait_for_rg]
+  depends_on          = [module.app_service_plan_ASP2]
 }
 
 module "traffic_manager" {
@@ -81,7 +70,6 @@ module "traffic_manager" {
   resource_group_name = var.traffic_manager.resource_group_name
   routing_method      = var.traffic_manager.routing_method
   tags                = var.traffic_manager.tags
-  depends_on          = [null_resource.wait_for_rg]
   endpoints = {
     APP1 = {
       name               = var.traffic_manager.endpoints["APP1"].name
@@ -98,4 +86,9 @@ module "traffic_manager" {
       location           = var.traffic_manager.endpoints["APP2"].location
     }
   }
+  depends_on = [
+    module.app_service_APP1,
+    module.app_service_APP2,
+    module.resource_group_RG3
+  ]
 } 
