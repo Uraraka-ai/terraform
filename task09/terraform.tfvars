@@ -1,0 +1,8 @@
+resource_group_name = "cmtr-fga8r1mg-mod9-rg"
+location            = "West Europe"
+vnet_name           = "cmtr-fga8r1mg-mod9-vnet"
+aks_subnet_name     = "aks-snet"
+aks_loadbalancer_ip = "20.101.17.229"
+aks_cluster_name    = "cmtr-fga8r1mg-mod9-aks"
+aks_nsg_name        = "aks-agentpool-91829076-nsg"
+naming_prefix       = "cmtr-fga8r1mg-mod9"
